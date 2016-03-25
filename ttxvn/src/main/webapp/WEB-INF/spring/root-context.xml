@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context
+		http://www.springframework.org/schema/context/spring-context.xsd">
+
+	<import resource="classpath:datasource-tx-hibernate.xml" />
+	
+	<import resource="security-context.xml"/>
+	
+	<import resource="cleaner.xml"/>
+	
+	<import resource="velocity-email-context.xml"/>
+		
+	<bean id="solrOxmClient" class="com.vsii.ttxvn.keywordsearching.httpclient.solr.SolrOxmClient"
+		p:baseUrlVi="http://${solr.vi.host}:${solr.vi.port}/solr"
+		p:baseUrlEn="http://${solr.en.host}:${solr.en.port}/solr"
+		p:marshaller-ref="marshallerSolrXML"
+		p:unmarshaller-ref="unmarshallerSolrJSON" />
+	
+	<context:property-placeholder location="classpath:/app-config.properties, classpath:/email.properties" />
+	
+	<context:component-scan base-package="com.vsii.ttxvn.keywordsearching" >
+		<context:exclude-filter type="regex" expression="com.vsii.ttxvn.keywordsearching.controller.*"/>
+	</context:component-scan>
+	
+	<bean id="serviceResolver" factory-method="createServiceResolver" class="com.vsii.ttxvn.keywordsearching.utils.ServiceResolver">
+		<constructor-arg>
+			<map>
+				<entry key="com.vsii.ttxvn.keywordsearching.service.FetchFrequencyService" value-ref="fetchFrequencyService"/>
+				<entry key="com.vsii.ttxvn.keywordsearching.service.SourceUrlService" value-ref="sourceUrlService"/>
+				<entry key="com.vsii.ttxvn.keywordsearching.service.UserService" value-ref="userService"/>
+				<entry key="com.vsii.ttxvn.keywordsearching.service.KeywordService" value-ref="keywordService"/>
+				<entry key="com.vsii.ttxvn.keywordsearching.service.CategoryService" value-ref="categoryService"/>
+				<entry key="com.vsii.ttxvn.keywordsearching.service.SearchNewsService" value-ref="searchNewsService"/>
+				<entry key="com.vsii.ttxvn.keywordsearching.service.GroupService" value-ref="groupService"/>
+				<entry key="com.vsii.ttxvn.keywordsearching.service.LoginService" value-ref="loginService"/>
+				<entry key="com.vsii.ttxvn.keywordsearching.service.ReportSummaryService" value-ref="reportSummaryService"/>
+				<entry key="com.vsii.ttxvn.keywordsearching.service.EmailService" value-ref="emailService"/>
+				<entry key="com.vsii.ttxvn.keywordsearching.service.TokenService" value-ref="tokenService"/>
+				<entry key="org.springframework.web.client.RestOperations" value-ref="restTemplate"/>
+			</map>
+		</constructor-arg>
+	</bean>
+	
+	<bean id="propertiesResolver" class="com.vsii.ttxvn.keywordsearching.utils.PropertiesResolver">
+		<property name="systemPropertiesModeName" value="SYSTEM_PROPERTIES_MODE_OVERRIDE"/>
+		<property name="locations">
+			<list>
+				<value>classpath:/app-config.properties</value>
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="restTemplate" class="org.springframework.web.client.RestTemplate">
+	    <constructor-arg>
+	        <bean class="org.springframework.http.client.HttpComponentsClientHttpRequestFactory"
+	            p:readTimeout="${ttxvn.spring.restful.read.timeout}"
+	            p:connectTimeout="${ttxvn.spring.restful.connection.timeout}" />
+	    </constructor-arg>
+	</bean>
+	
+	<!-- QUARTZ -->
+	<bean id="quartzScheduler" lazy-init="false" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="transactionManager" ref="hibernateTransactionManager" />
+		<property name="applicationContextSchedulerContextKey" value="applicationContext" /> 
+  		<property name="overwriteExistingJobs" value="true" />
+		<property name="autoStartup" value="false" /> 
+		<property name="waitForJobsToCompleteOnShutdown" value="true" /> 
+  		<property name="configLocation" value="classpath:/quartz.properties"/>
+  	</bean>
+  
+  	<bean id="scheduler" class="com.vsii.ttxvn.keywordsearching.schedule.ScheduleService">
+  		<constructor-arg ref="quartzScheduler"/>
+  		<constructor-arg>
+  			<list>
+  				<bean id="fetchFrequenceJob" class="com.vsii.ttxvn.keywordsearching.schedule.FetchFrequenceJobHandler"/>
+	  		</list>
+  		</constructor-arg>
+	</bean>
+  
+	<bean id="simpleJob" class="com.vsii.ttxvn.keywordsearching.schedule.InitialFetchFrequenceScheduleJob" init-method="createJob"/>
+	<bean id="keywordStatusJob" class="com.vsii.ttxvn.keywordsearching.schedule.KeywordStatusJob" init-method="createJob"/>
+</beans>

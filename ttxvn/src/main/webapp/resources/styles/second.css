@@ -1,0 +1,35 @@
+/* 
+    Custom CSS
+    User: Pham Thi Tuyet Nhung
+    Created date: 2014-09-11 13:35:00
+*/
+
+.title {
+    text-transform: uppercase;
+    font-weight: bold;
+    border-bottom: 5px solid #2c6499;
+}
+.xlsx-img {
+    background: #0d4478 url("img/xlsx.png") center center no-repeat;
+    float: left;
+    display: inline-block;
+    width: 35px;
+    height: 35px;
+    margin: 0;
+    padding: 0;
+}
+.xlsx-img img {
+    height: 25px;
+    margin-top: 10px;
+}
+.text-xse {
+    color: #ffffff;
+    background-color: #6193c2;
+    float: left;
+    width: 120px;
+    line-height: 45px;
+}
+.button-xlsx {
+    padding: 0;
+    border-width: 0;
+}

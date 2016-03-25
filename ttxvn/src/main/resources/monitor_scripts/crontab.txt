@@ -1,0 +1,7 @@
+1 1 * * * /setup/ttxvn_backup_daily.sh
+1 1 * * 6 /setup/ttxvn_backup_weekly.sh
+
+1 1 * * * /setup/ttxvn_database_backup_daily.sh
+1 1 * * 6 /setup/ttxvn_database_backup_weekly.sh
+
+*/5 * * * * /setup/ttxvn_system_monitor.sh

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans 
+                           http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.springframework.org/schema/context 
+                           http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <!-- Edit 'mail.properties' to set a valid user and password for the mail sender. -->
+    <!-- <context:property-placeholder location="classpath:/email.properties" /> -->
+    
+    <bean id="velocityEngine" class="org.springframework.ui.velocity.VelocityEngineFactoryBean" 
+          p:resourceLoaderPath="classpath:/templates/email" 
+          p:preferFileSystemAccess="false"/>
+
+    <!-- Mail sender configured for using Gmail -->
+    <bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl"
+          p:host="${com.vsii.ttxvn.mail.smtp.host}"
+          p:port="${com.vsii.ttxvn.mail.smtp.port}"
+          p:username="${com.vsii.ttxvn.mail.sender.username}"
+          p:password="${com.vsii.ttxvn.mail.sender.password}"
+          p:defaultEncoding="${com.vsii.ttxvn.mail.default.encoding}">
+        <property name="javaMailProperties">
+            <props>
+            	<prop key="mail.transport.protocol">smtp</prop>
+            	<prop key="mail.smtp.connectiontimeout">90000</prop>
+                <prop key="mail.smtp.auth">true</prop>
+                <prop key="mail.smtp.starttls.enable">true</prop>
+                <prop key="mail.debug">true</prop>
+            </props>
+        </property>
+    </bean>
+    
+    <bean id="simpleMailMessage" class="org.springframework.mail.SimpleMailMessage"
+          p:from="${com.vsii.ttxvn.mail.sender.email}"
+          p:subject="${com.vsii.ttxvn.mail.recover.password.subject}" />
+    
+</beans>

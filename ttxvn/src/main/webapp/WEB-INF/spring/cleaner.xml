@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:p="http://www.springframework.org/schema/p"
+    xmlns:task="http://www.springframework.org/schema/task"
+    xsi:schemaLocation="http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="ttxvnCacheCleaner" class="com.vsii.ttxvn.keywordsearching.utils.TtxvnCacheCleaner">
+    </bean>
+
+    <task:scheduled-tasks>
+        <task:scheduled ref="ttxvnCacheCleaner" method="run" fixed-delay="${ttxvn.caching.clean.cache.fixed.delay}"/>
+    </task:scheduled-tasks>
+</beans>

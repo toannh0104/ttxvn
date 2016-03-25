@@ -1,0 +1,11 @@
+//server web service + nutch
+export ttxvn_server_solr_vi_url=http://192.168.0.138:8983/solr/
+export ttxvn_server_solr_en_url=http://192.168.0.138:8984/solr/
+export ttxvn_nutch_crawl_resources_dir=/ttxvn-resources/ttxvn_crawling_resources
+export ttxvn_nutch_crawl_vi_dir=crawl_vi
+export ttxvn_nutch_crawl_en_dir=crawl_en
+export ttxvn_nutch_config_file=ttxvn_nutch.properties
+export ttxvn_nutch_time_limit_fetch=180
+export ttxvn_nutch_hadoop_num_thread=50
+export ttxvn_nutch_hadoop_num_slaves=1
+
